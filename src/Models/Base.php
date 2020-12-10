@@ -2,12 +2,20 @@
 
 namespace Puggan\Gnucash\Models;
 
+use JetBrains\PhpStorm\Pure;
+
+/**
+ * Class Base
+ * @package Puggan\Gnucash\Models
+ */
 abstract class Base implements \JsonSerializable
 {
     protected array $_old = [];
 
+    #[Pure]
     abstract public function tableName(): string;
 
+    #[Pure]
     abstract public function fieldNames(): array;
 
     public function jsonSerialize(): array
@@ -84,7 +92,10 @@ abstract class Base implements \JsonSerializable
         return self::loadOneFromDb($database, $this->guid);
     }
 
-    public static function guidClasses()
+    /**
+     * @return string[]
+     */
+    public static function guidClasses(): array
     {
         return [
             'accounts' => Account::class,
