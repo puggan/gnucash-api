@@ -3,20 +3,27 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
+use JetBrains\PhpStorm\Pure;
+
+/**
+ * Class Account
+ * @package Puggan\Gnucash\Models
+ */
 class Account extends Base
 {
     public ?string $guid;
     public string $name = '';
     public string $accountType = '';
     public ?string $commodityGuid;
-    public string $commodityScu = '';
-    public string $nonStdScu = '';
+    public int $commodityScu = 0;
+    public int $nonStdScu = 0;
     public ?string $parentGuid;
     public ?string $code;
     public ?string $description;
     public ?bool $hidden;
     public ?bool $placeholder;
 
+    #[Pure]
     public function tableName(): string
     {
         return 'accounts';
@@ -25,16 +32,21 @@ class Account extends Base
     /**
      * @return string[]
      */
+    #[Pure]
     public function fieldNames(): array
     {
-        $singleWordFields = ['guid', 'name', 'code', 'description', 'hidden', 'placeholder'];
-        $fieldTranslation = array_combine($singleWordFields, $singleWordFields);
-        $fieldTranslation['account_type'] = 'accountType';
-        $fieldTranslation['commodity_guid'] = 'commodityGuid';
-        $fieldTranslation['commodity_scu'] = 'commodityScu';
-        $fieldTranslation['non_std_scu'] = 'nonStdScu';
-        $fieldTranslation['parent_guid'] = 'parentGuid';
-        ksort($fieldTranslation);
-        return $fieldTranslation;
+        return [
+            'guid' => 'guid',
+            'name' => 'name',
+            'account_type' => 'accountType',
+            'commodity_guid' => 'commodityGuid',
+            'commodity_scu' => 'commodityScu',
+            'non_std_scu' => 'nonStdScu',
+            'parent_guid' => 'parentGuid',
+            'code' => 'code',
+            'description' => 'description',
+            'hidden' => 'hidden',
+            'placeholder' => 'placeholder',
+        ];
     }
 }
