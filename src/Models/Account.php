@@ -49,4 +49,18 @@ class Account extends Base
             'placeholder' => 'placeholder',
         ];
     }
+
+    public function parent(\PDO $database): ?self {
+        if(!$this->parentGuid) {
+            return null;
+        }
+        return self::loadOneFromDb($database, $this->parentGuid);
+    }
+
+    public function commodity(\PDO $database): ?Commoditie {
+        if(!$this->commodityGuid) {
+            return null;
+        }
+        return Commoditie::loadOneFromDb($database, $this->commodityGuid);
+    }
 }
