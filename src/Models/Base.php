@@ -49,9 +49,13 @@ abstract class Base implements \JsonSerializable
 
     public function insert(\PDO $database): static
     {
+        $fieldNames = $this->fieldNames();
+        //$primaryKey = key($fieldNames);
+        $primaryPropertyName = current($fieldNames);
+
         $setParts = [];
-        if (!$this->guid) {
-            $this->guid = self::newGuid();
+        if ($primaryPropertyName === 'guid' && !$this->$primaryPropertyName) {
+            $this->$primaryPropertyName = self::newGuid();
         }
         foreach ($this->fieldNames() as $dbName => $propertyName) {
             $setParts[$dbName] = $dbName . ' = ' . $database->quote($this->$propertyName);
@@ -60,22 +64,26 @@ abstract class Base implements \JsonSerializable
         $query = 'INSERT INTO ' . $this->tableName() . ' SET ' . implode(', ', $setParts);
         $database->exec($query);
 
-        return self::loadOneFromDb($database, $this->guid);
+        return self::loadOneFromDb($database, $this->$primaryPropertyName);
     }
 
     public function save(\PDO $database, bool $force = false): static
     {
-        if (!$this->guid || empty($this->_old['guid'])) {
+        $fieldNames = $this->fieldNames();
+        $primaryKey = key($fieldNames);
+        $primaryPropertyName = current($fieldNames);
+
+        if (empty($this->$primaryPropertyName) || empty($this->_old[$primaryPropertyName])) {
             return $this->insert($database);
         }
 
         $fields = $force ? $this->getFields() : $this->getChanged();
         if (!$fields) {
-            return self::loadOneFromDb($database, $this->guid);
+            return self::loadOneFromDb($database, $this->$primaryPropertyName);
         }
 
         $setParts = [];
-        foreach ($this->fieldNames() as $dbName => $propertyName) {
+        foreach ($fieldNames as $dbName => $propertyName) {
             if (isset($fields[$propertyName])) {
                 $setParts[$dbName] = $dbName . ' = ' . $database->quote($fields[$propertyName]);
                 if ($fields[$propertyName] === false) {
@@ -85,11 +93,11 @@ abstract class Base implements \JsonSerializable
                 $setParts[$dbName] = $dbName . ' = NULL';
             }
         }
-        $filter = ' guid = ' . $database->quote($this->_old['guid']);
+        $filter = ' ' . $primaryKey . ' = ' . $database->quote($this->_old[$primaryPropertyName]);
         $query = 'UPDATE ' . $this->tableName() . ' SET ' . implode(', ', $setParts) . ' WHERE ' . $filter;
         $database->exec($query);
 
-        return self::loadOneFromDb($database, $this->guid);
+        return self::loadOneFromDb($database, $this->$primaryPropertyName);
     }
 
     /**
@@ -133,9 +141,9 @@ abstract class Base implements \JsonSerializable
         return $guid;
     }
 
-    public static function loadOneFromDb(\PDO $database, string $guid): static
+    public static function loadOneFromDb(\PDO $database, $pkId): static
     {
-        return self::loadAllFromDb($database, 'guid = ' . $database->quote($guid) . ' LIMIT 1')->current();
+        return self::loadAllFromDb($database, '#PK# = ' . $database->quote($pkId) . ' LIMIT 1')->current();
     }
 
     /**
@@ -147,7 +155,9 @@ abstract class Base implements \JsonSerializable
     {
         $template = new static();
         $selectParts = [];
-        foreach ($template->fieldNames() as $dbName => $propertyName) {
+        $fieldNames = $template->fieldNames();
+        $primaryKey = key($fieldNames);
+        foreach ($fieldNames as $dbName => $propertyName) {
             if ($dbName === $propertyName) {
                 $selectParts[$propertyName] = $dbName;
             } else {
@@ -157,7 +167,7 @@ abstract class Base implements \JsonSerializable
 
         $query = 'SELECT ' . implode(', ', $selectParts) . ' FROM ' . $template->tableName();
         if ($filter) {
-            $query .= ' WHERE ' . $filter;
+            $query .= ' WHERE ' . strtr($filter, ['#PK#' => $primaryKey]);
         }
 
         $statement = $database->query($query);
