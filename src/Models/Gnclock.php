@@ -3,32 +3,18 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
 
 /**
  * Class Gnclock
  * @package Puggan\Gnucash\Models
  */
+#[Model('gnclock')]
 class Gnclock extends Base
 {
+    #[Field('Hostname', ture)]
     public string $hostname = '';
+    #[Field('PID', ture)]
     public int $pid = 0;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'gnclock';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'Hostname' => 'hostname',
-            'PID' => 'pid',
-        ];
-    }
 }

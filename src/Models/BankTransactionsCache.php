@@ -3,40 +3,26 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
 
 /**
  * Class BankTransactionsCache
  * @package Puggan\Gnucash\Models
  */
+#[Model('bank_transactions_cache')]
 class BankTransactionsCache extends Base
 {
+    #[Field('bank_t_row', ture)]
     public int $bankTRow = 0;
+    #[Field('updated_at')]
     public string $updatedAt = '';
+    #[Field('verified_at')]
     public string $verifiedAt = '';
+    #[Field]
     public int $revalidate = 0;
+    #[Field]
     public string $md5 = '';
+    #[Field]
     public string $data = '';
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'bank_transactions_cache';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'bank_t_row' => 'bankTRow',
-            'updated_at' => 'updatedAt',
-            'verified_at' => 'verifiedAt',
-            'revalidate' => 'revalidate',
-            'md5' => 'md5',
-            'data' => 'data',
-        ];
-    }
 }

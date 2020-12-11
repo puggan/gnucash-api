@@ -3,52 +3,38 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Billterm
  * @package Puggan\Gnucash\Models
  */
+#[Model('billterms')]
 class Billterm extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field]
     public string $name = '';
+    #[Field]
     public string $description = '';
+    #[Field]
     public int $refcount = 0;
+    #[Field]
     public int $invisible = 0;
+    #[Field]
     public ?string $parent;
+    #[Field]
     public string $type = '';
+    #[Field]
     public ?int $duedays;
+    #[Field]
     public ?int $discountdays;
+    #[Field('discount_num')]
     public ?int $discountNum;
+    #[Field('discount_denom')]
     public ?int $discountDenom;
+    #[Field]
     public ?int $cutoff;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'billterms';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'name' => 'name',
-            'description' => 'description',
-            'refcount' => 'refcount',
-            'invisible' => 'invisible',
-            'parent' => 'parent',
-            'type' => 'type',
-            'duedays' => 'duedays',
-            'discountdays' => 'discountdays',
-            'discount_num' => 'discountNum',
-            'discount_denom' => 'discountDenom',
-            'cutoff' => 'cutoff',
-        ];
-    }
 }

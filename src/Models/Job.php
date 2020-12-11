@@ -3,42 +3,28 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Job
  * @package Puggan\Gnucash\Models
  */
+#[Model('jobs')]
 class Job extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field]
     public string $id = '';
+    #[Field]
     public string $name = '';
+    #[Field]
     public string $reference = '';
+    #[Field]
     public int $active = 0;
+    #[Field('owner_type')]
     public ?int $ownerType;
+    #[Field('owner_guid')]
     public ?string $ownerGuid;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'jobs';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'id' => 'id',
-            'name' => 'name',
-            'reference' => 'reference',
-            'active' => 'active',
-            'owner_type' => 'ownerType',
-            'owner_guid' => 'ownerGuid',
-        ];
-    }
 }

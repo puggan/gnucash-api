@@ -3,40 +3,26 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
 
 /**
  * Class Recurrence
  * @package Puggan\Gnucash\Models
  */
+#[Model('recurrences')]
 class Recurrence extends Base
 {
+    #[Field('id', ture)]
     public int $id = 0;
+    #[Field('obj_guid')]
     public string $objGuid = '';
+    #[Field('recurrence_mult')]
     public int $recurrenceMult = 0;
+    #[Field('recurrence_period_type')]
     public string $recurrencePeriodType = '';
+    #[Field('recurrence_period_start')]
     public string $recurrencePeriodStart = '';
+    #[Field('recurrence_weekend_adjust')]
     public string $recurrenceWeekendAdjust = '';
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'recurrences';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'id' => 'id',
-            'obj_guid' => 'objGuid',
-            'recurrence_mult' => 'recurrenceMult',
-            'recurrence_period_type' => 'recurrencePeriodType',
-            'recurrence_period_start' => 'recurrencePeriodStart',
-            'recurrence_weekend_adjust' => 'recurrenceWeekendAdjust',
-        ];
-    }
 }

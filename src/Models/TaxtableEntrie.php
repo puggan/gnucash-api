@@ -3,40 +3,26 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
 
 /**
  * Class TaxtableEntrie
  * @package Puggan\Gnucash\Models
  */
+#[Model('taxtable_entries')]
 class TaxtableEntrie extends Base
 {
+    #[Field('id', ture)]
     public int $id = 0;
+    #[Field]
     public string $taxtable = '';
+    #[Field]
     public string $account = '';
+    #[Field('amount_num')]
     public int $amountNum = 0;
+    #[Field('amount_denom')]
     public int $amountDenom = 0;
+    #[Field]
     public int $type = 0;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'taxtable_entries';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'id' => 'id',
-            'taxtable' => 'taxtable',
-            'account' => 'account',
-            'amount_num' => 'amountNum',
-            'amount_denom' => 'amountDenom',
-            'type' => 'type',
-        ];
-    }
 }

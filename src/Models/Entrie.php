@@ -3,90 +3,76 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Entrie
  * @package Puggan\Gnucash\Models
  */
+#[Model('entries')]
 class Entrie extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field]
     public string $date = '';
+    #[Field('date_entered')]
     public ?string $dateEntered;
+    #[Field]
     public ?string $description;
+    #[Field]
     public ?string $action;
+    #[Field]
     public ?string $notes;
+    #[Field('quantity_num')]
     public ?int $quantityNum;
+    #[Field('quantity_denom')]
     public ?int $quantityDenom;
+    #[Field('i_acct')]
     public ?string $iAcct;
+    #[Field('i_price_num')]
     public ?int $iPriceNum;
+    #[Field('i_price_denom')]
     public ?int $iPriceDenom;
+    #[Field('i_discount_num')]
     public ?int $iDiscountNum;
+    #[Field('i_discount_denom')]
     public ?int $iDiscountDenom;
+    #[Field]
     public ?string $invoice;
+    #[Field('i_disc_type')]
     public ?string $iDiscType;
+    #[Field('i_disc_how')]
     public ?string $iDiscHow;
+    #[Field('i_taxable')]
     public ?int $iTaxable;
+    #[Field('i_taxincluded')]
     public ?int $iTaxincluded;
+    #[Field('i_taxtable')]
     public ?string $iTaxtable;
+    #[Field('b_acct')]
     public ?string $bAcct;
+    #[Field('b_price_num')]
     public ?int $bPriceNum;
+    #[Field('b_price_denom')]
     public ?int $bPriceDenom;
+    #[Field]
     public ?string $bill;
+    #[Field('b_taxable')]
     public ?int $bTaxable;
+    #[Field('b_taxincluded')]
     public ?int $bTaxincluded;
+    #[Field('b_taxtable')]
     public ?string $bTaxtable;
+    #[Field('b_paytype')]
     public ?int $bPaytype;
+    #[Field]
     public ?int $billable;
+    #[Field('billto_type')]
     public ?int $billtoType;
+    #[Field('billto_guid')]
     public ?string $billtoGuid;
+    #[Field('order_guid')]
     public ?string $orderGuid;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'entries';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'date' => 'date',
-            'date_entered' => 'dateEntered',
-            'description' => 'description',
-            'action' => 'action',
-            'notes' => 'notes',
-            'quantity_num' => 'quantityNum',
-            'quantity_denom' => 'quantityDenom',
-            'i_acct' => 'iAcct',
-            'i_price_num' => 'iPriceNum',
-            'i_price_denom' => 'iPriceDenom',
-            'i_discount_num' => 'iDiscountNum',
-            'i_discount_denom' => 'iDiscountDenom',
-            'invoice' => 'invoice',
-            'i_disc_type' => 'iDiscType',
-            'i_disc_how' => 'iDiscHow',
-            'i_taxable' => 'iTaxable',
-            'i_taxincluded' => 'iTaxincluded',
-            'i_taxtable' => 'iTaxtable',
-            'b_acct' => 'bAcct',
-            'b_price_num' => 'bPriceNum',
-            'b_price_denom' => 'bPriceDenom',
-            'bill' => 'bill',
-            'b_taxable' => 'bTaxable',
-            'b_taxincluded' => 'bTaxincluded',
-            'b_taxtable' => 'bTaxtable',
-            'b_paytype' => 'bPaytype',
-            'billable' => 'billable',
-            'billto_type' => 'billtoType',
-            'billto_guid' => 'billtoGuid',
-            'order_guid' => 'orderGuid',
-        ];
-    }
 }

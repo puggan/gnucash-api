@@ -3,46 +3,32 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Order
  * @package Puggan\Gnucash\Models
  */
+#[Model('orders')]
 class Order extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field]
     public string $id = '';
+    #[Field]
     public string $notes = '';
+    #[Field]
     public string $reference = '';
+    #[Field]
     public int $active = 0;
+    #[Field('date_opened')]
     public string $dateOpened = '';
+    #[Field('date_closed')]
     public string $dateClosed = '';
+    #[Field('owner_type')]
     public int $ownerType = 0;
+    #[Field('owner_guid')]
     public string $ownerGuid = '';
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'orders';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'id' => 'id',
-            'notes' => 'notes',
-            'reference' => 'reference',
-            'active' => 'active',
-            'date_opened' => 'dateOpened',
-            'date_closed' => 'dateClosed',
-            'owner_type' => 'ownerType',
-            'owner_guid' => 'ownerGuid',
-        ];
-    }
 }

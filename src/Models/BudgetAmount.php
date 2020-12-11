@@ -3,40 +3,26 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
 
 /**
  * Class BudgetAmount
  * @package Puggan\Gnucash\Models
  */
+#[Model('budget_amounts')]
 class BudgetAmount extends Base
 {
+    #[Field('id', ture)]
     public int $id = 0;
+    #[Field('budget_guid')]
     public string $budgetGuid = '';
+    #[Field('account_guid')]
     public string $accountGuid = '';
+    #[Field('period_num')]
     public int $periodNum = 0;
+    #[Field('amount_num')]
     public int $amountNum = 0;
+    #[Field('amount_denom')]
     public int $amountDenom = 0;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'budget_amounts';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'id' => 'id',
-            'budget_guid' => 'budgetGuid',
-            'account_guid' => 'accountGuid',
-            'period_num' => 'periodNum',
-            'amount_num' => 'amountNum',
-            'amount_denom' => 'amountDenom',
-        ];
-    }
 }

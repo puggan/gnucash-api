@@ -3,38 +3,24 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Taxtable
  * @package Puggan\Gnucash\Models
  */
+#[Model('taxtables')]
 class Taxtable extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field]
     public string $name = '';
+    #[Field]
     public int $refcount = 0;
+    #[Field]
     public int $invisible = 0;
+    #[Field]
     public ?string $parent;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'taxtables';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'name' => 'name',
-            'refcount' => 'refcount',
-            'invisible' => 'invisible',
-            'parent' => 'parent',
-        ];
-    }
 }

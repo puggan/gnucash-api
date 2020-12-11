@@ -3,40 +3,26 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Transaction
  * @package Puggan\Gnucash\Models
  */
+#[Model('transactions')]
 class Transaction extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field('currency_guid')]
     public string $currencyGuid = '';
+    #[Field]
     public string $num = '';
+    #[Field('post_date')]
     public ?string $postDate;
+    #[Field('enter_date')]
     public ?string $enterDate;
+    #[Field]
     public ?string $description;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'transactions';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'currency_guid' => 'currencyGuid',
-            'num' => 'num',
-            'post_date' => 'postDate',
-            'enter_date' => 'enterDate',
-            'description' => 'description',
-        ];
-    }
 }

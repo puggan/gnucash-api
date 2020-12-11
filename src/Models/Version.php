@@ -3,32 +3,18 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
 
 /**
  * Class Version
  * @package Puggan\Gnucash\Models
  */
+#[Model('versions')]
 class Version extends Base
 {
+    #[Field('table_name', ture)]
     public string $tableName = '';
+    #[Field('table_version')]
     public int $tableVersion = 0;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'versions';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'table_name' => 'tableName',
-            'table_version' => 'tableVersion',
-        ];
-    }
 }

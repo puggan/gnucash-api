@@ -3,46 +3,32 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Commoditie
  * @package Puggan\Gnucash\Models
  */
+#[Model('commodities')]
 class Commoditie extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field]
     public string $namespace = '';
+    #[Field]
     public string $mnemonic = '';
+    #[Field]
     public ?string $fullname;
+    #[Field]
     public ?string $cusip;
+    #[Field]
     public int $fraction = 0;
+    #[Field('quote_flag')]
     public int $quoteFlag = 0;
+    #[Field('quote_source')]
     public ?string $quoteSource;
+    #[Field('quote_tz')]
     public ?string $quoteTz;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'commodities';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'namespace' => 'namespace',
-            'mnemonic' => 'mnemonic',
-            'fullname' => 'fullname',
-            'cusip' => 'cusip',
-            'fraction' => 'fraction',
-            'quote_flag' => 'quoteFlag',
-            'quote_source' => 'quoteSource',
-            'quote_tz' => 'quoteTz',
-        ];
-    }
 }

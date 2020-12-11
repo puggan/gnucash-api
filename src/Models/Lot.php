@@ -3,34 +3,20 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Lot
  * @package Puggan\Gnucash\Models
  */
+#[Model('lots')]
 class Lot extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+    #[Field('account_guid')]
     public ?string $accountGuid;
+    #[Field('is_closed')]
     public int $isClosed = 0;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'lots';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'account_guid' => 'accountGuid',
-            'is_closed' => 'isClosed',
-        ];
-    }
 }

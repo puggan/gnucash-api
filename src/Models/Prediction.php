@@ -3,40 +3,26 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
 
 /**
  * Class Prediction
  * @package Puggan\Gnucash\Models
  */
+#[Model('predictions')]
 class Prediction extends Base
 {
+    #[Field('prediction_id', ture)]
     public int $predictionId = 0;
+    #[Field]
     public string $name = '';
+    #[Field('start_date')]
     public string $startDate = '';
+    #[Field('end_date')]
     public ?string $endDate;
+    #[Field]
     public ?string $code;
+    #[Field]
     public ?int $value;
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'predictions';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'prediction_id' => 'predictionId',
-            'name' => 'name',
-            'start_date' => 'startDate',
-            'end_date' => 'endDate',
-            'code' => 'code',
-            'value' => 'value',
-        ];
-    }
 }
