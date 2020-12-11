@@ -3,64 +3,44 @@ declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\HasOne;
+use Puggan\Gnucash\Attributes\Model;
+use Puggan\Gnucash\Interfaces\GuidModel;
 
 /**
  * Class Account
  * @package Puggan\Gnucash\Models
  */
+#[Model('accounts')]
 class Account extends Base
 {
-    public ?string $guid;
+    use GuidModel;
+
+    #[Field]
     public string $name = '';
+    #[Field('account_type')]
     public string $accountType = '';
+    #[Field('commodity_guid')]
     public ?string $commodityGuid;
+    #[Field('commodity_scu')]
     public int $commodityScu = 0;
+    #[Field('non_std_scu')]
     public int $nonStdScu = 0;
+    #[Field('parent_guid')]
     public ?string $parentGuid;
+    #[Field]
     public ?string $code;
+    #[Field]
     public ?string $description;
+    #[Field]
     public ?bool $hidden;
+    #[Field]
     public ?bool $placeholder;
 
-    #[Pure]
-    public function tableName(): string
-    {
-        return 'accounts';
-    }
+    #[HasOne('commodity_guid')]
+    public ?Commoditie $commodity;
 
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-            'guid' => 'guid',
-            'name' => 'name',
-            'account_type' => 'accountType',
-            'commodity_guid' => 'commodityGuid',
-            'commodity_scu' => 'commodityScu',
-            'non_std_scu' => 'nonStdScu',
-            'parent_guid' => 'parentGuid',
-            'code' => 'code',
-            'description' => 'description',
-            'hidden' => 'hidden',
-            'placeholder' => 'placeholder',
-        ];
-    }
-
-    public function parent(\PDO $database): ?self {
-        if(!$this->parentGuid) {
-            return null;
-        }
-        return self::loadOneFromDb($database, $this->parentGuid);
-    }
-
-    public function commodity(\PDO $database): ?Commoditie {
-        if(!$this->commodityGuid) {
-            return null;
-        }
-        return Commoditie::loadOneFromDb($database, $this->commodityGuid);
-    }
+    #[HasOne('parent_guid')]
+    public ?self $parent;
 }
