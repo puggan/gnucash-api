@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Split extends Base
 {
     use GuidModel;
+
     #[Field('tx_guid')]
     public string $txGuid = '';
     #[Field('account_guid')]

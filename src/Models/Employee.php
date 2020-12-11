@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Employee extends Base
 {
     use GuidModel;
+
     #[Field]
     public string $username = '';
     #[Field]

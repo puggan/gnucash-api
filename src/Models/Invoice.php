@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Invoice extends Base
 {
     use GuidModel;
+
     #[Field]
     public string $id = '';
     #[Field('date_opened')]

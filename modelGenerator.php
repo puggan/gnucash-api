@@ -96,7 +96,7 @@ function generatePhpFile(string $table, string $className, \PDO $database)
     if (empty($properties['guid'])) {
         $extraRefUse = '';
     } else {
-        $properties['guid'] = '    use GuidModel;';
+        $properties['guid'] = '    use GuidModel;' . PHP_EOL;
         $extraRefUse = 'use Puggan\Gnucash\Interfaces\GuidModel;' . PHP_EOL;
     }
     $propertiesCode = implode(PHP_EOL, $properties);
@@ -118,5 +118,6 @@ class {$className} extends Base
 {
 {$propertiesCode}
 }
+
 PHP_FILE;
 }

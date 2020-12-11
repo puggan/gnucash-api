@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Commoditie extends Base
 {
     use GuidModel;
+
     #[Field]
     public string $namespace = '';
     #[Field]

@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Job extends Base
 {
     use GuidModel;
+
     #[Field]
     public string $id = '';
     #[Field]

@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Transaction extends Base
 {
     use GuidModel;
+
     #[Field('currency_guid')]
     public string $currencyGuid = '';
     #[Field]

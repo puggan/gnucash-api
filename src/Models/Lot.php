@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Lot extends Base
 {
     use GuidModel;
+
     #[Field('account_guid')]
     public ?string $accountGuid;
     #[Field('is_closed')]

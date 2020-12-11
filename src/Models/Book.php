@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Book extends Base
 {
     use GuidModel;
+
     #[Field('root_account_guid')]
     public string $rootAccountGuid = '';
     #[Field('root_template_guid')]

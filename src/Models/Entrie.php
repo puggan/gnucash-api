@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Entrie extends Base
 {
     use GuidModel;
+
     #[Field]
     public string $date = '';
     #[Field('date_entered')]

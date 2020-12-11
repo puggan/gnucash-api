@@ -15,6 +15,7 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 class Budget extends Base
 {
     use GuidModel;
+
     #[Field]
     public string $name = '';
     #[Field]
