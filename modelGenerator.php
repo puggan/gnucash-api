@@ -22,7 +22,7 @@ require_once __DIR__ . '/cli.php';
     }
     foreach ($tables as $table) {
         $className = camelCase($table, true);
-        if(substr($className, -1) === 's') {
+        if (substr($className, -1) === 's') {
             $className = substr($className, 0, -1);
         }
         $tempFileName = $tempDir . '/' . $className . '.php';
@@ -47,12 +47,12 @@ function camelCase(string $dbName, $uc = false): string
 function generatePhpFile(string $table, string $className, \PDO $database)
 {
     $properties = [];
-    $fields = [];
     $statement = $database->query('DESCRIBE ' . $table);
     while (false !== ($row = $statement->fetch(\PDO::FETCH_ASSOC))) {
         $dbName = $row['Field'];
         $type = $row['Type'];
-        $nullable = $row['Null'] !== 'NO' || $dbName === 'guid';
+        $primaryKey = $row['Key'] === 'PRI';
+        $nullable = $row['Null'] !== 'NO' || $primaryKey && $dbName === 'guid';
         $propertyName = camelCase($dbName);
         $pureType = preg_replace('#\(.*#', '', $type);
         switch ($pureType) {
@@ -81,47 +81,42 @@ function generatePhpFile(string $table, string $className, \PDO $database)
         $phpType = ($nullable ? '?' : '') . $phpType;
         $defaultPart = $nullable ? '' : $defaultPart;
 
+        if ($primaryKey) {
+            $properties[$propertyName] = "    #[Field('{$dbName}', ture)]";
+        } elseif ($dbName === $propertyName) {
+            $properties[$propertyName] = "    #[Field]";
+        } else {
+            $properties[$propertyName] = "    #[Field('{$dbName}')]";
+        }
+
         // public ?string \$guid;
-        $properties[] = "    public {$phpType} \${$propertyName}{$defaultPart};";
-        //         \$fieldTranslation['guid'] = 'guid';
-        $fields[] = "            '{$dbName}' => '{$propertyName}',";
+        $properties[$propertyName] .= PHP_EOL . "    public {$phpType} \${$propertyName}{$defaultPart};";
     }
 
+    if (empty($properties['guid'])) {
+        $extraRefUse = '';
+    } else {
+        $properties['guid'] = '    use GuidModel;';
+        $extraRefUse = 'use Puggan\Gnucash\Interfaces\GuidModel;' . PHP_EOL;
+    }
     $propertiesCode = implode(PHP_EOL, $properties);
-    $fieldsCode = implode(PHP_EOL, $fields);
     return <<<PHP_FILE
 <?php
 declare(strict_types=1);
 
 namespace Puggan\Gnucash\Models;
 
-use JetBrains\PhpStorm\Pure;
-
+use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\Model;
+{$extraRefUse}
 /**
  * Class {$className}
  * @package Puggan\Gnucash\Models
  */
+#[Model('{$table}')]
 class {$className} extends Base
 {
 {$propertiesCode}
-
-    #[Pure]
-    public function tableName(): string
-    {
-        return '{$table}';
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure]
-    public function fieldNames(): array
-    {
-        return [
-{$fieldsCode}
-        ];
-    }
 }
-
 PHP_FILE;
 }
