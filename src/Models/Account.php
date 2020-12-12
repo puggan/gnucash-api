@@ -11,8 +11,12 @@ use Puggan\Gnucash\Interfaces\GuidModel;
 /**
  * Class Account
  * @package Puggan\Gnucash\Models
+ * @property Commoditie $commodity
+ * @property Account $parent
  */
 #[Model('accounts')]
+#[HasOne(Commoditie::class, 'commodity', 'commodityGuid')]
+#[HasOne(Account::class, 'parent', 'parentGuid')]
 class Account extends Base
 {
     use GuidModel;
@@ -37,10 +41,4 @@ class Account extends Base
     public ?bool $hidden;
     #[Field]
     public ?bool $placeholder;
-
-    #[HasOne('commodity_guid')]
-    public ?Commoditie $commodity;
-
-    #[HasOne('parent_guid')]
-    public ?self $parent;
 }

@@ -26,15 +26,15 @@ abstract class Base implements \JsonSerializable
     private static array $relations = [];
 
     protected array $_old = [];
+    private static ?\PDO $_db;
 
-    private static function loadAttribtes(): void
+    private static function loadAttributes(): void
     {
         $class = new \ReflectionClass(static::class);
 
         //<editor-fold desc="Table">
         $models = $class->getAttributes(Model::class);
         if (\count($models) !== 1) {
-            var_dump($class);
             throw new \UnexpectedValueException(
                 'Models should have 1 Model attribute, ' . static::class . ' have ' . \count($models)
             );
@@ -47,10 +47,20 @@ abstract class Base implements \JsonSerializable
         self::$tables[static::class] = $model->tableName;
         //</editor-fold>
 
+        //<editor-fold desc="Relation">
+        $relations = $class->getAttributes(Relation::class, \ReflectionAttribute::IS_INSTANCEOF);
+        foreach ($relations as $relationMeta) {
+            /** @var Relation $relation */
+            $relation = $relationMeta->newInstance();
+            self::$relations[static::class][$relation->property] = $relation;
+        }
+        var_dump(self::$relations);
+        //</editor-fold>
+
+        //<editor-fold desc="Fields">
         self::$primaryKeys[static::class] = [];
         self::$fields[static::class] = [];
         foreach ($class->getProperties() as $property) {
-            //<editor-fold desc="Fields">
             $fields = $property->getAttributes(Field::class);
             if (!empty($fields[0])) {
                 /** @var Field $field */
@@ -62,43 +72,34 @@ abstract class Base implements \JsonSerializable
                     self::$primaryKeys[static::class][] = $field->dbName;
                 }
                 self::$fields[static::class][$field->dbName] = $property;
-                continue;
             }
-            //</editor-fold>
-
-            //<editor-fold desc="Relation">
-            $relations = $property->getAttributes(Relation::class);
-            if (!empty($relations[0])) {
-                /** @var Field $field */
-                $relation = $relations[0]->newInstance();
-                self::$relations[static::class][$property->name] = $relation;
-            }
-            //</editor-fold>
         }
+        //</editor-fold>
     }
 
     /** @noinspection PhpPureFunctionMayProduceSideEffectsInspection */
     #[Pure]
     public static function primaryKeyNames(): array
     {
-        if(empty(self::$tables[static::class])) {
-            static::loadAttribtes();
+        if (empty(self::$tables[static::class])) {
+            static::loadAttributes();
         }
         return self::$primaryKeys[static::class];
     }
 
     #[Pure]
-    public function primaryKeys(bool $old = false): array
-    {
+    public function primaryKeys(
+        bool $old = false
+    ): array {
         $keys = [];
         $fields = static::fieldNames();
         $keyNames = static::primaryKeyNames();
         if ($old) {
-            foreach($keyNames as $dbName) {
+            foreach ($keyNames as $dbName) {
                 $keys[$dbName] = $this->_old[$fields[$dbName]];
             }
         } else {
-            foreach($keyNames as $dbName) {
+            foreach ($keyNames as $dbName) {
                 $keys[$dbName] = $this->{$fields[$dbName]};
             }
         }
@@ -109,8 +110,8 @@ abstract class Base implements \JsonSerializable
     #[Pure]
     public static function tableName(): string
     {
-        if(empty(self::$tables[static::class])) {
-            static::loadAttribtes();
+        if (empty(self::$tables[static::class])) {
+            static::loadAttributes();
         }
         return self::$tables[static::class];
     }
@@ -119,8 +120,8 @@ abstract class Base implements \JsonSerializable
     #[Pure]
     public static function fieldNames(): array
     {
-        if(empty(self::$tables[static::class])) {
-            static::loadAttribtes();
+        if (empty(self::$tables[static::class])) {
+            static::loadAttributes();
         }
         $names = [];
         foreach (self::$fields[static::class] as $dbName => $field) {
@@ -131,10 +132,13 @@ abstract class Base implements \JsonSerializable
 
     /** @noinspection PhpPureFunctionMayProduceSideEffectsInspection PDO::quote is Pure in our use-case */
     #[Pure]
-    public static function buildWhere(\PDO $database, array $values, string $glue = ' AND '): string
-    {
+    public static function buildWhere(
+        \PDO $database,
+        array $values,
+        string $glue = ' AND '
+    ): string {
         $parts = [];
-        foreach($values as $dbName => $value) {
+        foreach ($values as $dbName => $value) {
             $value = $database->quote($value);
             $parts[] = "`{$dbName}` = $value";
         }
@@ -174,7 +178,7 @@ abstract class Base implements \JsonSerializable
     {
         $fieldNames = static::fieldNames();
 
-        if ($this instanceOf PrimaryKeyGenerator) {
+        if ($this instanceof PrimaryKeyGenerator) {
             $this->fixMissingPK();
         }
 
@@ -236,6 +240,7 @@ abstract class Base implements \JsonSerializable
      */
     public static function loadAllFromDb(\PDO $database, string $filter = null): \Generator
     {
+        self::$_db = $database;
         $selectParts = [];
         $fieldNames = static::fieldNames();
         foreach ($fieldNames as $dbName => $propertyName) {
@@ -259,5 +264,28 @@ abstract class Base implements \JsonSerializable
             $entity->storeOld();
             yield $entity;
         }
+    }
+
+    public function setDb(\PDO $db)
+    {
+        $this->_db = $db;
+    }
+
+    public function __get(string $name)
+    {
+        if (empty(self::$tables[static::class])) {
+            static::loadAttributes();
+        }
+        if (empty(self::$relations[static::class][$name])) {
+            throw new \UnexpectedValueException('Unknow field or relation ' . $name);
+        }
+        $relation = self::$relations[static::class][$name];
+        $relation->loadRelation(self::$_db, $this);
+        if (!property_exists($this, $name)) {
+            throw new \UnexpectedValueException('Failed to load relation ' . $name);
+        }
+
+        /** @noinspection PhpVariableVariableInspection confirmed with property_exists */
+        return $this->$name;
     }
 }
