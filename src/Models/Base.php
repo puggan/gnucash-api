@@ -54,7 +54,6 @@ abstract class Base implements \JsonSerializable
             $relation = $relationMeta->newInstance();
             self::$relations[static::class][$relation->property] = $relation;
         }
-        var_dump(self::$relations);
         //</editor-fold>
 
         //<editor-fold desc="Fields">
@@ -152,10 +151,13 @@ abstract class Base implements \JsonSerializable
         return $data;
     }
 
-    public function getFields(): array
+    #[Pure]
+    public function getFields(bool $dbNames = false): array
     {
-        $data = get_object_vars($this);
-        unset($data['_old']);
+        $data = [];
+        foreach(static::fieldNames() as $dbName => $propertyName) {
+            $data[$dbNames ? $dbName : $propertyName] = $this->$propertyName;
+        }
         return $data;
     }
 
@@ -266,11 +268,24 @@ abstract class Base implements \JsonSerializable
         }
     }
 
-    public function setDb(\PDO $db)
+    public function __isset(string $name): bool
     {
-        $this->_db = $db;
+        return false;
     }
 
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set(string $name, $value): void
+    {
+        throw new \TypeError('Read only parameter: ' . $name);
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
     public function __get(string $name)
     {
         if (empty(self::$tables[static::class])) {
