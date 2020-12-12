@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Puggan\Gnucash\Models;
 
 use Puggan\Gnucash\Attributes\Field;
+use Puggan\Gnucash\Attributes\HasMany;
 use Puggan\Gnucash\Attributes\HasOne;
 use Puggan\Gnucash\Attributes\Model;
 use Puggan\Gnucash\Interfaces\GuidModel;
@@ -13,10 +14,12 @@ use Puggan\Gnucash\Interfaces\GuidModel;
  * @package Puggan\Gnucash\Models
  * @property Commoditie $commodity
  * @property Account $parent
+ * @property Account[] $children
  */
 #[Model('accounts')]
 #[HasOne(Commoditie::class, 'commodity', 'commodityGuid')]
 #[HasOne(Account::class, 'parent', 'parentGuid')]
+#[HasMany(Account::class, 'children', 'parent_guid', 'parent')]
 class Account extends Base
 {
     use GuidModel;

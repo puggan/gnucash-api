@@ -13,8 +13,7 @@ class HasMany extends Relation
         string $classname,
         string $property,
         public string $relationKey,
-        public string $pivotTable = '',
-        public string $pivotKey = '',
+        public string $reverseProperty = '',
     )
     {
         parent::__construct($classname, $property);
@@ -22,7 +21,23 @@ class HasMany extends Relation
 
     public function loadRelation(\PDO $database, Base $model): void
     {
-        // TODO: Implement loadRelation() method.
-        $wherePart = Base::buildWhere([$otherPrimaryKey[0] => $model->{$this->relationKey}]);
+        if (!is_subclass_of($this->classname, Base::class, true)) {
+            throw new \RuntimeException('Bad class, not Base');
+        }
+
+        $primaryKeys = $model->primaryKeys();
+        if (\count($primaryKeys) !== 1) {
+            throw new \RuntimeException('Bad class, not 1 PK');
+        }
+
+        $wherePart = Base::buildWhere($database, [$this->relationKey => array_values($primaryKeys)[0]]);
+        $generator = $this->classname::loadAllFromDb($database, $wherePart);
+        $model->{$this->property} = iterator_to_array($generator);
+        if($this->reverseProperty) {
+            /** @var Base $other */
+            foreach($model->{$this->property} as $other) {
+                $other->{$this->reverseProperty} = $model;
+            }
+        }
     }
 }
