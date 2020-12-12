@@ -26,7 +26,7 @@ class Database
             ];
 
             self::$link = new \PDO(
-                "mysql:host={$hostname};dbname={$dbname}",
+                "mysql:host={$hostname};dbname={$dbname};charset=utf8",
                 $username,
                 $password,
                 $options
